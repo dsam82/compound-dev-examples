@@ -3,6 +3,20 @@ pragma solidity >=0.8.0 <0.9.0;
 
 import "hardhat/console.sol";
 
+
+interface ERC20 {
+	function approve(address, uint256) external returns (bool);
+	function transfer(address, uint256) external returns (bool);
+}
+
+interface CErc20 {
+	function mint(uint256) external returns (uint256);
+	function redeem(uint) external returns (uint);
+	
+	function exchangeRateCurrent() external returns (uint256);
+	function redeemUnderlying(uint) external returns (uint);
+}
+
 interface CEth {
 	function mint() external payable;
 	function redeem(uint) external returns (uint256);
@@ -43,6 +57,29 @@ contract CompoundTest {
 		console.log("redeem result: %s", result);
 		emit contractLogs("redeem result: %s", result);
 
+		return true;
+	}
+	
+	function mintCErc20(address _erc20Contract, address _cErc20Contract, uint256 _numTokensToSupply) public returns (uint) {
+		ERC20 erc20 = ERC20(_erc20Contract);
+		CErc20 cToken = CErc20(_cErc20Contract);
+		
+		erc20.approve(_cErc20Contract, _numTokensToSupply);
+		return cToken.mint(_numTokensToSupply);
+	}
+
+	function redeemCErc20(address _cErc20Contract, uint256 amount, bool redeemType) public returns (bool) {
+		CErc20 cToken = CErc20(_cErc20Contract);
+		
+		uint256 redeemResult;
+		if (redeemType) {
+			redeemResult = cToken.redeem(amount);
+		} else {
+			redeemResult = cToken.redeemUnderlying(amount);
+		}
+		
+		emit contractLogs("amount ETH redeemed: ", redeemResult);
+		
 		return true;
 	}
 
