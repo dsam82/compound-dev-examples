@@ -30,12 +30,12 @@ const main = async function () {
 	
 	let amount = (10*Math.pow(10, int(assetDecimal))).toString()
 	let tx = await erc20Contract.transfer(myContractAddress, amount);
-	let results = await tx.wait(1);
+	await tx.wait(1);
 	
 	console.log(`Underlying asset ${TokenName} transfered from erc20 contract`);
 	
 	tx = await myContract.mintCErc20(erc20ContractAddress, cErc20ContractAddress, amount);
-	let mintResult = tx.wait(1);
+	let mintResult = await tx.wait(1);
 	
 	console.log("cToken minted", mintResult)
 	console.log(mintResult.events);
