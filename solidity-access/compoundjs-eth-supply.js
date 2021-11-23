@@ -1,5 +1,4 @@
 const Compound = require('@compound-finance/compound-js')
-const { ethers } = require('ethers')
 
 const decimals = Compound.decimals[Compound.ETH]
 const provider_url = process.env.PROVIDER_URL
